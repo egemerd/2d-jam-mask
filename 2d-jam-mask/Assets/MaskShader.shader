@@ -60,6 +60,9 @@ Shader "Custom/MaskedSprite"
                 fixed4 col = tex2D(_MainTex, i.uv) * i.color;
                 fixed maskValue = tex2D(_MaskTex, i.uv).r;
                 
+                // Ensure binary mask behavior
+                maskValue = maskValue > 0.5 ? 1.0 : 0.0;
+
                 // White mask = opaque, Black mask = transparent
                 col.a *= maskValue;
                 
