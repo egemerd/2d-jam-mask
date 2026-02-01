@@ -29,7 +29,12 @@ public class SceneTransition : MonoBehaviour
     public void CallSceneEntranceTransition()
     {
         StartCoroutine(SceneEntranceTransition());
-    }   
+    }  
+    
+    public void CallMainMenuTransition()
+    {
+        StartCoroutine(MainMenuTransition());
+    }
 
 
     private IEnumerator TransitionCoroutine()
@@ -57,13 +62,13 @@ public class SceneTransition : MonoBehaviour
             yield return null;
         }
 
-        // Ensure circle is fully expanded
+
         if (circleWipeImage != null)
         {
             circleWipeImage.transform.localScale = Vector3.one * 30f;
         }
 
-        // Step 4: Load next scene
+       
         int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
         if (nextSceneIndex < SceneManager.sceneCountInBuildSettings)
         {
@@ -77,12 +82,11 @@ public class SceneTransition : MonoBehaviour
 
     private IEnumerator SceneEntranceTransition()
     {
-        // Start with circle fully covering screen
+       
         circleWipeImage.transform.localScale = Vector3.one * 30f;
 
         yield return new WaitForEndOfFrame();
 
-        // Shrink circle to reveal scene
         float elapsed = 0f;
         while (elapsed < circleShrinkDuration)
         {
@@ -92,7 +96,42 @@ public class SceneTransition : MonoBehaviour
             yield return null;
         }
 
-        // Ensure circle is fully shrunk
         circleWipeImage.transform.localScale = Vector3.zero;
+    }
+
+    private IEnumerator MainMenuTransition()
+    {
+        float elapsed = 0f;
+        float maxDuration = Mathf.Max(circleParticleDuration, circleExpandDuration);
+
+        while (elapsed < maxDuration)
+        {
+            elapsed += Time.deltaTime;
+
+            if (circleWipeImage != null && elapsed < circleExpandDuration)
+            {
+                float scale = Mathf.Lerp(0f, 30f, elapsed / circleExpandDuration);
+                circleWipeImage.transform.localScale = Vector3.one * scale;
+            }
+
+            yield return null;
+        }
+
+
+        if (circleWipeImage != null)
+        {
+            circleWipeImage.transform.localScale = Vector3.one * 30f;
+        }
+
+
+        int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
+        if (nextSceneIndex < SceneManager.sceneCountInBuildSettings)
+        {
+            SceneManager.LoadScene(nextSceneIndex);
+        }
+        else
+        {
+            SceneManager.LoadScene(0);
+        }
     }
 }

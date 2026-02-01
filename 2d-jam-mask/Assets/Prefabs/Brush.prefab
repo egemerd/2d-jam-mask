@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Brush
   brushSize: 1
-  minBrushSize: 1
+  minBrushSize: 0.4
   maxBrushSize: 5
   brushSizeStep: 0.2
   revealBottomLayer: 0

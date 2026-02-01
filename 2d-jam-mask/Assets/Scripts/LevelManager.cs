@@ -33,9 +33,19 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    private void HandlePlayerFinish()
+    public void HandlePlayerFinish()
     {
         sceneTransition.CallTransitionCoroutine();  
+    }
+
+    public void MainMenuTransition()
+    {
+        sceneTransition.CallMainMenuTransition();
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
     }
 
     

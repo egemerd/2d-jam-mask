@@ -1,9 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// Manages the mask texture that controls which layer is visible.
-/// White mask = top layer visible, Black mask = bottom layer visible.
-/// </summary>
 public class LayerMaskManager : MonoBehaviour
 {
     [Header("Layer References")]
@@ -30,9 +26,7 @@ public class LayerMaskManager : MonoBehaviour
         CreateBrushTexture();
     }
 
-    /// <summary>
-    /// Creates the mask render texture and assigns it to the top layer's shader.
-    /// </summary>
+    
     private void InitializeMask()
     {
         // Step 1: Create a RenderTexture (like a canvas you can paint on)
@@ -56,9 +50,7 @@ public class LayerMaskManager : MonoBehaviour
         Debug.Log("Mask initialized! Top layer is using masked material.");
     }
 
-    /// <summary>
-    /// Creates a circular brush texture for smooth painting.
-    /// </summary>
+    
     private void CreateBrushTexture()
     {
         int size = 128;
@@ -82,13 +74,7 @@ public class LayerMaskManager : MonoBehaviour
         brushTexture.Apply();
     }
 
-    /// <summary>
-    /// Paints on the mask at the given world position.
-    /// </summary>
-    /// <param name="worldPosition">Where to paint in world space</param>
-    /// <param name="revealBottom">True = black brush (reveal bottom), False = white brush (reveal top)</param>
-    /// <param name="brushSize">Size of the brush in world units</param>
-    public void PaintOnMask(Vector2 worldPosition, bool revealBottom, float brushSize)
+     public void PaintOnMask(Vector2 worldPosition, bool revealBottom, float brushSize)
     {
         // Step 1: Convert world position to UV coordinates (0-1 range)
         Bounds bounds = topLayer.bounds;
@@ -109,9 +95,7 @@ public class LayerMaskManager : MonoBehaviour
         PaintAtUV(uv, brushColor, brushSize, bounds.size.x);
     }
 
-    /// <summary>
-    /// Actually paints on the render texture at UV coordinates.
-    /// </summary>
+    
     private void PaintAtUV(Vector2 uv, Color color, float brushSize, float worldWidth)
     {
         // 1. Calculate brush size in pixels relative to the mask resolution
@@ -159,9 +143,7 @@ public class LayerMaskManager : MonoBehaviour
         Destroy(brushMat); // Important to prevent memory leaks
     }
 
-    /// <summary>
-    /// Reset the mask to fully white (top layer fully visible).
-    /// </summary>
+    
     public void ResetMask()
     {
         RenderTexture.active = maskTexture;

@@ -1,10 +1,6 @@
 using UnityEngine;
 
-/// <summary>
-/// Detects black-colored pixels on screen in front of the player
-/// and blocks movement in that direction.
-/// Uses a rectangular area sampling for better collision detection.
-/// </summary>
+
 public class BlackColorDetector : MonoBehaviour
 {
     [Header("Detection Settings")]
@@ -55,7 +51,7 @@ public class BlackColorDetector : MonoBehaviour
     private int lastBlackHits = 0;
     private int lastTotalSamples = 0;
 
-    // Store sample results for debug visualization
+   
     private struct SampleDebugInfo
     {
         public Vector2 worldPos;
@@ -116,10 +112,7 @@ public class BlackColorDetector : MonoBehaviour
         isCapturing = true;
     }
 
-    /// <summary>
-    /// Checks if movement in the given direction is blocked by black pixels.
-    /// Uses a rectangular area in front of the player.
-    /// </summary>
+  
     public bool IsDirectionBlocked(Vector2 moveDirection)
     {
         if (!isCapturing || moveDirection.sqrMagnitude < 0.01f)
@@ -180,11 +173,11 @@ public class BlackColorDetector : MonoBehaviour
                 sampleDebugInfos[sampleIndex].onScreen = true;
                 validSamples++;
 
-                // Sample the pixel color
+               
                 Color pixelColor = screenCapture.GetPixel((int)screenPos.x, (int)screenPos.y);
                 sampleDebugInfos[sampleIndex].sampledColor = pixelColor;
 
-                // Check if it's black
+            
                 bool isBlack = IsColorBlack(pixelColor);
                 sampleDebugInfos[sampleIndex].hitBlack = isBlack;
 
@@ -200,7 +193,6 @@ public class BlackColorDetector : MonoBehaviour
         lastBlackHits = blackHits;
         lastTotalSamples = validSamples;
 
-        // Block if black percentage exceeds threshold
         if (validSamples == 0) return false;
 
         float blackPercentage = (float)blackHits / validSamples;
@@ -209,10 +201,7 @@ public class BlackColorDetector : MonoBehaviour
         return lastDirectionBlocked;
     }
 
-    /// <summary>
-    /// Gets a modified velocity that avoids black areas.
-    /// Use this to allow sliding along black walls.
-    /// </summary>
+ 
     public Vector2 GetAllowedVelocity(Vector2 desiredVelocity)
     {
         if (desiredVelocity.sqrMagnitude < 0.01f)
@@ -220,18 +209,17 @@ public class BlackColorDetector : MonoBehaviour
 
         Vector2 normalizedDir = desiredVelocity.normalized;
 
-        // Check if straight ahead is blocked
         if (IsDirectionBlocked(normalizedDir))
         {
-            // Try sliding along walls - check perpendicular directions
+
             Vector2 rightDir = new Vector2(normalizedDir.y, -normalizedDir.x);
             Vector2 leftDir = new Vector2(-normalizedDir.y, normalizedDir.x);
 
-            // Project desired velocity onto perpendicular axes
+            
             float rightDot = Vector2.Dot(desiredVelocity, rightDir);
             float leftDot = Vector2.Dot(desiredVelocity, leftDir);
 
-            // Check which perpendicular direction is free
+ 
             if (!IsDirectionBlocked(rightDir) && rightDot > 0)
             {
                 return rightDir * rightDot;
@@ -241,7 +229,7 @@ public class BlackColorDetector : MonoBehaviour
                 return leftDir * leftDot;
             }
 
-            // Both blocked, stop movement
+
             return Vector2.zero;
         }
 
@@ -255,33 +243,29 @@ public class BlackColorDetector : MonoBehaviour
                color.b < blackThreshold;
     }
 
-    // Debug visualization
+
     private void OnDrawGizmos()
     {
         if (!showDebugGizmos || !Application.isPlaying) return;
 
         if (lastCheckedDirection.sqrMagnitude < 0.01f)
         {
-            // Draw default rectangle around player when not moving
             DrawRectangle(Vector2.right, new Color(0.5f, 0.5f, 0.5f, 0.3f));
             return;
         }
 
-        // Draw the detection rectangle
         if (showRectangleOutline)
         {
             Color rectColor = lastDirectionBlocked ? new Color(1, 0, 0, 0.5f) : new Color(0, 1, 0, 0.5f);
             DrawRectangle(lastCheckedDirection, rectColor);
         }
 
-        // Draw sample points
         if (showSamplePoints && sampleDebugInfos != null)
         {
             foreach (var sample in sampleDebugInfos)
             {
                 if (!sample.onScreen)
                 {
-                    // Off-screen samples (magenta)
                     Gizmos.color = new Color(1, 0, 1, 0.3f);
                     Gizmos.DrawWireSphere(sample.worldPos, 0.03f);
                     continue;
@@ -289,18 +273,16 @@ public class BlackColorDetector : MonoBehaviour
 
                 if (sample.hitBlack)
                 {
-                    // Black detected - solid red sphere
                     Gizmos.color = Color.red;
                     Gizmos.DrawSphere(sample.worldPos, 0.04f);
                 }
                 else
-                {
-                    // Clear - green wireframe
+                {                  
                     Gizmos.color = Color.green;
                     Gizmos.DrawWireSphere(sample.worldPos, 0.03f);
                 }
 
-                // Show sampled pixel color
+              
                 if (showPixelColors)
                 {
                     Gizmos.color = sample.sampledColor;
@@ -309,16 +291,16 @@ public class BlackColorDetector : MonoBehaviour
             }
         }
 
-        // Draw player center indicator
+  
         Gizmos.color = lastDirectionBlocked ? Color.red : Color.green;
         Gizmos.DrawWireSphere(transform.position, 0.1f);
 
-        // Draw direction arrow
+        
         Vector2 arrowEnd = (Vector2)transform.position + lastCheckedDirection * (detectionDistance + 0.15f);
         Gizmos.color = lastDirectionBlocked ? Color.red : Color.cyan;
         Gizmos.DrawLine(transform.position, arrowEnd);
 
-        // Arrow head
+        
         Vector2 perpendicular = new Vector2(-lastCheckedDirection.y, lastCheckedDirection.x);
         Gizmos.DrawLine(arrowEnd, arrowEnd - lastCheckedDirection * 0.1f + perpendicular * 0.07f);
         Gizmos.DrawLine(arrowEnd, arrowEnd - lastCheckedDirection * 0.1f - perpendicular * 0.07f);
@@ -328,7 +310,7 @@ public class BlackColorDetector : MonoBehaviour
     {
         Vector2 perpendicular = new Vector2(-direction.y, direction.x);
 
-        // Calculate rectangle corners
+      
         Vector2 center = (Vector2)transform.position + direction * (detectionDistance * 0.5f);
 
         Vector2 topLeft = center + direction * (detectionDistance * 0.5f) + perpendicular * (detectionWidth * 0.5f);
@@ -342,14 +324,14 @@ public class BlackColorDetector : MonoBehaviour
         Gizmos.DrawLine(bottomRight, bottomLeft);
         Gizmos.DrawLine(bottomLeft, topLeft);
 
-        // Draw filled rectangle (semi-transparent)
+      
         Gizmos.color = new Color(color.r, color.g, color.b, 0.1f);
         DrawQuad(topLeft, topRight, bottomRight, bottomLeft);
     }
 
     private void DrawQuad(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4)
     {
-        // Draw two triangles to fill the quad
+
         Gizmos.DrawLine(p1, p2);
         Gizmos.DrawLine(p2, p3);
         Gizmos.DrawLine(p3, p1);
