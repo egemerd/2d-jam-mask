@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 5b2420112d2b44e439942a58175e6a32
+guid: f66da331e0d0282438f82e0185ca7217
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3902382141298665293
-    second: Yeni Proje (13)_0
+      213: 7917091780990625243
+    second: Yeni Proje (17)_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -113,7 +113,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Yeni Proje (13)_0
+      name: Yeni Proje (17)_0
       rect:
         serializedVersion: 2
         x: 0
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3b890124e14f7d9c0800000000000000
-      internalID: -3902382141298665293
+      spriteID: bd56c1c37092fdd60800000000000000
+      internalID: 7917091780990625243
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Yeni Proje (13)_0: -3902382141298665293
+      Yeni Proje (17)_0: 7917091780990625243
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
