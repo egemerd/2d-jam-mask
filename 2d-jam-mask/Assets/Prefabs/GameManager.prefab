@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5190308410158691364}
   - component: {fileID: 7950592413908958325}
+  - component: {fileID: 7449920801784052111}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -48,3 +49,23 @@ MonoBehaviour:
   bottomLayer: {fileID: 0}
   maskResolution: 2048
   brushSoftness: 0
+--- !u!114 &7449920801784052111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2946497848678347067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91762c8ce6536a44787957de33c801f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelManager
+  finish: {fileID: 0}
+  confettiEffect: {fileID: 0}
+  circleWipeParticleEffect: {fileID: 0}
+  circleWipeImage: {fileID: 0}
+  confettiDuration: 2
+  circleParticleDuration: 1.5
+  circleExpandDuration: 1
+  circleShrinkDuration: 0.8

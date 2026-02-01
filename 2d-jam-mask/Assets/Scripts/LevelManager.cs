@@ -1,37 +1,44 @@
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class LevelManager : MonoBehaviour
 {
     public static LevelManager Instance { get; private set; }
 
-    [SerializeField] private Finish finish; 
+    [Header("References")]
+    [SerializeField] private Finish finish;
+    [SerializeField] private SceneTransition sceneTransition;
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        Instance = this;    
     }
+
+    
 
     private void OnEnable()
     {
-        finish.OnPlayerFinish += HandlePlayerFinish;
+        if (finish != null)
+        {
+            finish.OnPlayerFinish += HandlePlayerFinish;
+        }
     }
 
     private void OnDisable()
     {
-        finish.OnPlayerFinish -= HandlePlayerFinish;
+        if (finish != null)
+        {
+            finish.OnPlayerFinish -= HandlePlayerFinish;
+        }
     }
 
     private void HandlePlayerFinish()
     {
-        int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
-        SceneManager.LoadScene(nextSceneIndex);
+        sceneTransition.CallTransitionCoroutine();  
     }
+
+    
+    
+    
 }
