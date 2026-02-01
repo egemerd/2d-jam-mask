@@ -6,8 +6,11 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement Settings")]
     [SerializeField] private float moveSpeed = 5f;
-    [SerializeField] private float acceleration = 10f; // How fast you reach max speed
-    [SerializeField] private float decceleration = 10f; // How fast you stop
+    [SerializeField] private float acceleration = 10f;
+    [SerializeField] private float decceleration = 10f;
+
+    [Header("Black Detection")]
+    [SerializeField] private BlackColorDetector blackDetector;
 
     private Rigidbody2D rb;
     private PlayerControls controls;
@@ -18,9 +21,11 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         controls = new PlayerControls();
-
-        // Disable gravity for top-down
         rb.gravityScale = 0f;
+
+        // Auto-find detector if not assigned
+        if (blackDetector == null)
+            blackDetector = GetComponent<BlackColorDetector>();
     }
 
     private void OnEnable() => controls.Enable();
@@ -28,7 +33,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        // Read input from the generated C# class
         moveInput = controls.Gameplay.PlayerMovement.ReadValue<Vector2>();
     }
 
@@ -39,16 +43,16 @@ public class PlayerMovement : MonoBehaviour
 
     private void ApplyMovement()
     {
-        // Determine target velocity
         Vector2 targetVelocity = moveInput * moveSpeed;
 
-        // Calculate the difference between current and target velocity
+        // Check for black obstacles and modify velocity
+        if (blackDetector != null && targetVelocity.sqrMagnitude > 0.01f)
+        {
+            targetVelocity = blackDetector.GetAllowedVelocity(targetVelocity);
+        }
+
         float lerpSpeed = moveInput.magnitude > 0 ? acceleration : decceleration;
-
-        // Smoothly transition velocity
         currentVelocity = Vector2.Lerp(currentVelocity, targetVelocity, lerpSpeed * Time.fixedDeltaTime);
-
-        // Apply to Rigidbody
         rb.linearVelocity = currentVelocity;
     }
 }
