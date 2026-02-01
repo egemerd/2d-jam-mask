@@ -10,7 +10,9 @@ public class Brush : MonoBehaviour
 {
     [Header("Brush Settings")]
     [SerializeField] private float brushSize = 0.1f;
-
+    [SerializeField] private float minBrushSize = 0.05f;
+    [SerializeField] private float maxBrushSize = 0.5f;
+    [SerializeField] private float brushSizeStep = 0.02f;
 
     [SerializeField] private bool revealBottomLayer = false;
 
@@ -22,11 +24,7 @@ public class Brush : MonoBehaviour
 
     [Header("Visual Feedback")]
     [SerializeField] private SpriteRenderer brushSprite;
-
-    
     [SerializeField] private Sprite whiteBrushSprite;
-
-    
     [SerializeField] private Sprite blackBrushSprite;
 
     // Input System reference
@@ -50,14 +48,17 @@ public class Brush : MonoBehaviour
         controls.Gameplay.Click.started += OnClickStarted;
         controls.Gameplay.Click.canceled += OnClickCanceled;
 
+        // Subscribe to scroll action (add this to your PlayerControls if not present)
+        controls.Gameplay.Scroll.performed += OnScroll;
+
         // Auto-assign main camera if not set
         if (mainCamera == null)
         {
             mainCamera = Camera.main;
         }
 
-        // Set initial brush visual
-        
+        // Set initial brush scale
+
     }
 
     private void OnEnable()
@@ -75,6 +76,7 @@ public class Brush : MonoBehaviour
     private void Update()
     {
         UpdateBrushPosition();
+        HandleScrollInput();
 
         if (isPainting)
         {
@@ -100,7 +102,33 @@ public class Brush : MonoBehaviour
         transform.position = worldPos;
     }
 
+    /// <summary>
+    /// Handles scroll input to change brush size.
+    /// </summary>
+    private void HandleScrollInput()
+    {
+        Vector2 scroll = controls.Gameplay.Scroll.ReadValue<Vector2>();
+
+        if (scroll.y != 0)
+        {
+            // Determine scroll direction (up = positive, down = negative)
+            float scrollDirection = Mathf.Sign(scroll.y);
+
+            // Adjust brush size
+            brushSize += scrollDirection * brushSizeStep;
+            
+            // Clamp to min/max values
+            brushSize = Mathf.Clamp(brushSize, minBrushSize, maxBrushSize);
+            brushSprite.transform.localScale = brushSize * Vector2.one;
+            // Update visual scale
+            
+
+            Debug.Log($"Brush Size: {brushSize:F3}");
+        }
+    }
+
     
+
     private void PaintWithInterpolation()
     {
         if (maskManager != null)
@@ -139,7 +167,6 @@ public class Brush : MonoBehaviour
 
     #region Input Callbacks
 
-    
     private void OnSwitchWhite(InputAction.CallbackContext context)
     {
         revealBottomLayer = !revealBottomLayer;
@@ -147,32 +174,32 @@ public class Brush : MonoBehaviour
         otherColour.color = revealBottomLayer ? Color.white : Color.black;
     }
 
-
-    
     private void OnClickStarted(InputAction.CallbackContext context)
     {
         isPainting = true;
     }
 
-   
     private void OnClickCanceled(InputAction.CallbackContext context)
     {
         isPainting = false;
         hasPreviousMousePos = false; // Reset interpolation state
     }
 
+    private void OnScroll(InputAction.CallbackContext context)
+    {
+        // Alternative: Handle scroll in callback instead of Update
+        // This is already handled in HandleScrollInput() in Update
+    }
+
     #endregion
 
-     private void SetBrushMode(bool revealBottom)
+    private void SetBrushMode(bool revealBottom)
     {
         revealBottomLayer = revealBottom;
         //UpdateBrushVisual();
 
         Debug.Log($"Brush mode: {(revealBottom ? "BLACK (reveal bottom)" : "WHITE (reveal top)")}");
     }
-
-    
-    
 
     private void OnDestroy()
     {
@@ -182,6 +209,7 @@ public class Brush : MonoBehaviour
             controls.Gameplay.SwitchWhite.performed -= OnSwitchWhite;
             controls.Gameplay.Click.started -= OnClickStarted;
             controls.Gameplay.Click.canceled -= OnClickCanceled;
+            controls.Gameplay.Scroll.performed -= OnScroll;
 
             controls.Dispose();
         }
